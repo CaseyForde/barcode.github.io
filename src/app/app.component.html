@@ -33,12 +33,15 @@
   <button mat-icon-button [matMenuTriggerFor]="appMenu">
     <mat-icon>more_vert</mat-icon>
   </button>
+  <div *ngIf="qrResultString">
+    <strong>{{ qrResultString }}</strong>
+  </div>
+
 </header>
 
 <zxing-scanner [torch]="torchEnabled" [(device)]="currentDevice" (scanSuccess)="onCodeResult($event)"
 [formats]="formatsEnabled" [tryHarder]="tryHarder" (permissionResponse)="onHasPermission($event)"
-(camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)"
-timeBetweenScans=250></zxing-scanner>
+(camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)"></zxing-scanner>
 
 <section class="results" *ngIf="qrResultString">
   <div>

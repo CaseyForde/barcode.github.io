@@ -18,9 +18,7 @@ export class AppComponent implements OnInit,AfterViewInit{
 
   formatsEnabled: BarcodeFormat[] = [
     BarcodeFormat.CODE_128,
-    BarcodeFormat.DATA_MATRIX,
     BarcodeFormat.EAN_13,
-    BarcodeFormat.QR_CODE,
   ];
 
   hasDevices: boolean;
