@@ -37,7 +37,8 @@
 
 <zxing-scanner [torch]="torchEnabled" [(device)]="currentDevice" (scanSuccess)="onCodeResult($event)"
 [formats]="formatsEnabled" [tryHarder]="tryHarder" (permissionResponse)="onHasPermission($event)"
-(camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)"></zxing-scanner>
+(camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)"
+timeBetweenScans=1 delayBetweenScanSuccess=10000></zxing-scanner>
 
 <section class="results" *ngIf="qrResultString">
   <div>
