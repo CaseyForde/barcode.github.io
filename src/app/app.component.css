@@ -1,0 +1,16 @@
+zxing-scanner {
+  max-width: 100%;
+}
+.results {
+
+  position: sticky;
+  bottom: 0;
+  padding: 15px;
+  background: #02c3c3;
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+}

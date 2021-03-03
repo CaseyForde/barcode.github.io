@@ -3,6 +3,7 @@ import { BarcodeFormat, Result } from '@zxing/library';
 import { BrowserMultiFormatOneDReader } from '@zxing/browser';
 import Quagga from 'Quagga'
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -12,16 +13,24 @@ import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 export class AppComponent implements OnInit,AfterViewInit{
   @ViewChild('scanner') scanner: ZXingScannerComponent
 
-  permission:boolean = false;
-  enabled:boolean = false;
-  title: string;
-  torch = false;
-  failures = 0
-  hasDevices: boolean;
-  hasPermission: boolean;
-  qrResult: Result;
   availableDevices: MediaDeviceInfo[];
   currentDevice: MediaDeviceInfo = null;
+
+  formatsEnabled: BarcodeFormat[] = [
+    BarcodeFormat.CODE_128,
+    BarcodeFormat.DATA_MATRIX,
+    BarcodeFormat.EAN_13,
+    BarcodeFormat.QR_CODE,
+  ];
+
+  hasDevices: boolean;
+  hasPermission: boolean;
+
+  qrResultString: string;
+
+  torchEnabled = false;
+  torchAvailable$ = new BehaviorSubject<boolean>(false);
+  tryHarder = false;
 
 
   constructor(){
@@ -33,73 +42,41 @@ export class AppComponent implements OnInit,AfterViewInit{
   }
 
   ngAfterViewInit(){
-    this.scannerInit()
-  }
-
-  onClick(){
-    console.log(this.availableDevices)
-  }
-
-
-  // onFileSelected(event){
-  //   if (event.target.files && event.target.files[0]) {
-  //     this.file = event.target.files[0];
-  //     const file = event.target.files[0];
-  //     const reader = new FileReader();
-  //     reader.onload = () => this.imageSrc = reader.result;
-  //     reader.readAsDataURL(file);
-  //   }
-  // }
-
-  onDetect(result: string): void {
-    alert(result);
-  }
-
-  onTorchCompatible(event){
-    console.log(event,'torch')
-  }
-
-  camerasFoundHandler(event){
-    console.log(event,'cameras found')
-  }
-
-  camerasNotFoundHandler(event){
-    console.log('Not cammeras found')
-  }
-  scanSuccessHandler(event){
 
   }
-
-  scanErrorHandler(event){
-
-  }
-  scanFailureHandler(event){
-    console.log("Failure")
-    this.failures++
+  clearResult(): void {
+    this.qrResultString = null;
   }
 
-  scannerInit() {
+  onCamerasFound(devices: MediaDeviceInfo[]): void {
+    this.availableDevices = devices;
+    this.hasDevices = Boolean(devices && devices.length);
+  }
 
-    this.scanner.camerasFound.subscribe((devices: MediaDeviceInfo[]) => {
-      this.hasDevices = true;
-      this.availableDevices = devices;
-      this.currentDevice = null;
-
-     // this.compareWith = this.compareWithFn;
-      this.onDeviceSelectChange(devices[devices.length - 1].deviceId);
-    });
-
-    this.scanner.camerasNotFound.subscribe(() => this.hasDevices = false);
-    this.scanner.scanComplete.subscribe((result: Result) => this.qrResult = result);
-    this.scanner.permissionResponse.subscribe((perm: boolean) => this.hasPermission = perm);
+  onCodeResult(resultString: string) {
+    this.qrResultString = resultString;
   }
 
   onDeviceSelectChange(selected: string) {
+    const device = this.availableDevices.find(x => x.deviceId === selected);
+    this.currentDevice = device || null;
+  }
 
-    for (const device of this.availableDevices) {
-        if (device.deviceId === selected) {
-          this.currentDevice = device;
-        }
-      }
-    }
+
+  onHasPermission(has: boolean) {
+    this.hasPermission = has;
+  }
+
+  onTorchCompatible(isCompatible: boolean): void {
+    this.torchAvailable$.next(isCompatible || false);
+  }
+
+  toggleTorch(): void {
+    this.torchEnabled = !this.torchEnabled;
+  }
+
+  toggleTryHarder(): void {
+    this.tryHarder = !this.tryHarder;
+  }
+
 }
