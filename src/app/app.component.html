@@ -16,11 +16,12 @@
 </mat-select><br/><br/>
 <zxing-scanner
 #scanner
-[formats]="['QR_CODE', 'EAN_13', 'CODE_128', 'DATA_MATRIX']"
+
+></zxing-scanner>
+<!-- [formats]="['QR_CODE', 'EAN_13', 'CODE_128', 'DATA_MATRIX']"
 [torch]="torch"
 (torchCompatible)="onTorchCompatible($event)"
 (camerasFound)="camerasFoundHandler($event)"
 (camerasNotFound)="camerasNotFoundHandler($event)"
 (scanSuccess)="scanSuccessHandler($event)"
-(scanError)="scanErrorHandler($event)"
-></zxing-scanner>
+(scanError)="scanErrorHandler($event)" -->
