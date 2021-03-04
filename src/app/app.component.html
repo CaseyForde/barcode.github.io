@@ -15,7 +15,16 @@
   <canvas class="drawingBuffer" ></canvas>
 </div> -->
 
-<mat-menu #appMenu="matMenu">
+<barcode-scanner-livestream
+type="code_128"
+(valueChanges)="onValueChanges($event)"
+(started)="(onStarted)"
+></barcode-scanner-livestream>
+<div [hidden]="!qrResultString">
+{{ qrResultString }}
+</div>
+
+<!-- <mat-menu #appMenu="matMenu">
   <mat-selection-list>
     <mat-list-option checkboxPosition="start" (click)="toggleTorch()" [selected]="torchEnabled"
       *ngIf="torchAvailable$ | async">
@@ -60,7 +69,7 @@
     <strong>{{ qrResultString }}</strong>
   </div>
   <button mat-icon-button (click)="clearResult()">&times;</button>
-</section>
+</section> -->
 
 <!-- [formats]="['QR_CODE', 'EAN_13', 'CODE_128', 'DATA_MATRIX']"
 [torch]="torch"
