@@ -11,9 +11,6 @@
 <!-- Zxingjs/ngx-scanner  -->
 <mat-menu #appMenu="matMenu">
   <mat-selection-list>
-    <mat-list-option checkboxPosition="start" (click)="toggleTryHarder()" [selected]="tryHarder">
-      Enable Try-harder
-    </mat-list-option>
     <mat-list-option checkboxPosition="start" (click)="toggleTorch()" [selected]="torchEnabled"
       *ngIf="torchAvailable$ | async">
       Enable Torch
@@ -40,7 +37,7 @@
 </header>
 
 <zxing-scanner [torch]="torchEnabled" [(device)]="currentDevice" (scanSuccess)="onCodeResult($event)"
-[formats]="formatsEnabled" [tryHarder]="tryHarder" (permissionResponse)="onHasPermission($event)"
+[formats]="formatsEnabled" tryHarder=true (permissionResponse)="onHasPermission($event)"
 (camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)"></zxing-scanner>
 
 <section class="results" *ngIf="qrResultString">
