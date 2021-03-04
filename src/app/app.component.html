@@ -10,12 +10,12 @@
 
 <!-- Zxingjs/ngx-scanner  -->
 
-<div id="interactive" class="viewport">
-  <!-- <video autoplay="true" preload="auto" src="" muted="true" playsinline="true"></video> -->
+<!-- <div id="interactive" class="viewport">
+  <video autoplay="true" preload="auto" src="" muted="true" playsinline="true"></video>
   <canvas class="drawingBuffer" ></canvas>
-</div>
+</div> -->
 
-<!-- <mat-menu #appMenu="matMenu">
+<mat-menu #appMenu="matMenu">
   <mat-selection-list>
     <mat-list-option checkboxPosition="start" (click)="toggleTorch()" [selected]="torchEnabled"
       *ngIf="torchAvailable$ | async">
@@ -49,13 +49,12 @@
     timeBetweenScans=10 autofocusEnable=true
     ></zxing-scanner>
   </div>
-</div> -->
+</div>
 
 
 
 
-
-<section class="results" *ngIf="qrResultString">
+ <section class="results" *ngIf="qrResultString">
   <div>
     <small>Result</small>
     <strong>{{ qrResultString }}</strong>

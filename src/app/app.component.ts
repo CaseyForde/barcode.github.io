@@ -52,7 +52,7 @@ export class AppComponent implements OnInit,AfterViewInit{
     BarcodeFormat.CODE_128,
     BarcodeFormat.EAN_13,
   ];
-
+  value = 'https://caseyforde.github.io/barcode.github.io/'
   hasDevices: boolean;
   hasPermission: boolean;
   detectionHash = {}
