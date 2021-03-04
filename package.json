@@ -28,7 +28,6 @@
     "angular-cli-ghpages": "^1.0.0-rc.1",
     "javascript-barcode-reader": "^0.6.8",
     "ng-barcode-detector": "0.0.18",
-    "ngx-barcode": "^0.3.0",
     "ngx-barcode-scanner": "^0.2.0",
     "node-zxing": "^0.1.4",
     "quagga": "^0.12.1",
