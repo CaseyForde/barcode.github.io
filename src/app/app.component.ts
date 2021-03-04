@@ -76,14 +76,15 @@ export class AppComponent implements OnInit,AfterViewInit{
   }
 
   ngAfterViewInit(){
-    console.log(this._window.nativeWindow)
-    if (!('BarcodeDetector' in this._window.nativeWindow)) {
-      console.log('Barcode Detector is not supported by this browser.');
-      alert('yes')
-    } else {
-      alert('no')
-      console.log('Barcode Detector supported!');
+    if (('BarcodeDetector' in window) && (this.windowFormats)) {
+      console.log('Barcode scanning is supported.');
+    }else {
+      console.log('Barcode Detector is not supported!');
     }
+  }
+  async windowFormats(){
+    let formats = await (window['BarcodeDetector'].getSupportedFormats()).includes('ean_13','upc_a')
+    return  formats
   }
   clearResult(): void {
     this.qrResultString = null;
