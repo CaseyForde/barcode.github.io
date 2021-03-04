@@ -119,13 +119,7 @@ SOFTWARE.
 @zxing/ngx-scanner
 MIT
 
-jsbarcode
-MIT
-
 ng-barcode-detector
-
-ngx-barcode
-MIT
 
 rxjs
 Apache-2.0
