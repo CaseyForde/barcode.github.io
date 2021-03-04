@@ -16,7 +16,7 @@
 </div> -->
 
 <barcode-scanner-livestream
-type="code_128"
+[type]="['ean','upc']"
 (valueChanges)="onValueChanges($event)"
 (started)="(onStarted)"
 ></barcode-scanner-livestream>
