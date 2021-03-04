@@ -1,6 +1,11 @@
-zxing-scanner {
-  max-width: 100%;
+zxing-scanner::ng-deep video {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
 }
+
 .results {
 
   position: sticky;

@@ -1,9 +1,48 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { BarcodeFormat, Result } from '@zxing/library';
-import { BrowserMultiFormatOneDReader } from '@zxing/browser';
+import { BrowserMultiFormatOneDReader, IScannerControls } from '@zxing/browser';
 import Quagga from 'Quagga'
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 import { BehaviorSubject } from 'rxjs';
+import { BrowserCodeReader, HTMLCanvasElementLuminanceSource, HybridBinarizer, BinaryBitmap } from '@zxing/library';
+
+ZXingScannerComponent.prototype.getAnyVideoDevice = (): Promise<MediaStream> => {
+  return navigator.mediaDevices.getUserMedia({
+    audio: false,
+    video: {
+      width: { min: 640, ideal: 1920 },
+      height: { min: 400, ideal: 1080 },
+      aspectRatio: { ideal: 1.7777777778 }
+    }
+  });
+};
+
+BrowserCodeReader.prototype.decodeFromVideoDevice = async function(
+  deviceId: string | undefined,
+  previewElem: string | HTMLVideoElement | undefined,
+  callbackFn: any,
+): Promise<any> {
+
+  // We had to comment this out because it is a private method...
+  // BrowserCodeReader.checkCallbackFnOrThrow(callbackFn);
+
+  let videoConstraints: MediaTrackConstraints;
+
+  if (!deviceId) {
+    videoConstraints = { facingMode: 'environment' };
+  } else {
+    videoConstraints = {
+      deviceId: { exact: deviceId },
+      width: { min: 640, ideal: 1920 },
+      height: { min: 400, ideal: 1080 },
+      aspectRatio: { ideal: 1.7777777778 }
+    };
+  }
+
+  const constraints: MediaStreamConstraints = { video: videoConstraints };
+
+  return await this.decodeFromConstraints(constraints, previewElem, callbackFn);
+};
 
 @Component({
   selector: 'app-root',
