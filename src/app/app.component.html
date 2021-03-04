@@ -15,14 +15,6 @@
   <canvas class="drawingBuffer" ></canvas>
 </div> -->
 
-<barcode-scanner-livestream
-[type]="['ean','upc']"
-(valueChanges)="onValueChanges($event)"
-(started)="(onStarted)"
-></barcode-scanner-livestream>
-<div [hidden]="!qrResultString">
-{{ qrResultString }}
-</div>
 
 <!-- <mat-menu #appMenu="matMenu">
   <mat-selection-list>

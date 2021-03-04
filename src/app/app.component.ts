@@ -5,7 +5,7 @@ import Quagga from 'Quagga'
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 import { BehaviorSubject } from 'rxjs';
 import { BrowserCodeReader, HTMLCanvasElementLuminanceSource, HybridBinarizer, BinaryBitmap } from '@zxing/library';
-import { BarcodeScannerLivestreamComponent } from "ngx-barcode-scanner";
+import { WindowService } from "./window.service";
 
 BrowserCodeReader.prototype.createBinaryBitmap = function (mediaElement) {
   const captureCanvasContext = this.getCaptureCanvasContext(mediaElement);
@@ -46,9 +46,6 @@ BrowserCodeReader.prototype.createBinaryBitmap = function (mediaElement) {
 export class AppComponent implements OnInit,AfterViewInit{
   @ViewChild('scanner') scanner: ZXingScannerComponent
 
-  @ViewChild(BarcodeScannerLivestreamComponent)
-  barcodeScanner: BarcodeScannerLivestreamComponent;
-
   availableDevices: MediaDeviceInfo[];
   currentDevice: MediaDeviceInfo = null;
 
@@ -70,16 +67,21 @@ export class AppComponent implements OnInit,AfterViewInit{
   tryHarder = false;
 
 
-  constructor(){
+  constructor(private _window: WindowService){
 
   }
 
   ngOnInit(){
-
+    console.log(this._window.nativeWindow)
+    if (!('BarcodeDetector' in this._window.nativeWindow)) {
+      console.log('Barcode Detector is not supported by this browser.');
+    } else {
+      console.log('Barcode Detector supported!');
+    }
   }
 
   ngAfterViewInit(){
-    this.barcodeScanner.start();
+
   }
   clearResult(): void {
     this.qrResultString = null;
@@ -116,33 +118,4 @@ export class AppComponent implements OnInit,AfterViewInit{
     this.tryHarder = !this.tryHarder;
   }
 
-  onValueChanges(result) {
-    if(this.isValid(result)){
-      this.qrResultString = result.codeResult.code;
-      alert(this.qrResultString)
-    }
-  }
-
-  isValid(result) {
-    const errors: number[] = result.codeResult.decodedCodes
-       .filter(_ => _.error !== undefined)
-       .map(_ => _.error);
-
-    const median = this._getMedian(errors);
-
-    //Good result for code_128 : median <= 0.08 and maxError < 0.1
-    return !(median > 0.08 || errors.some(err => err > 0.1))
-  }
-
-  _getMedian(arr: number[]): number {
-    arr.sort((a, b) => a - b);
-    const half = Math.floor( arr.length / 2 );
-    if (arr.length % 2 === 1) // Odd length
-      return arr[ half ];
-    return (arr[half - 1] + arr[half]) / 2.0;
-  }
-
-  onStarted(started) {
-    console.log(started);
-  }
 }

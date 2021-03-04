@@ -8,23 +8,22 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSelectModule} from '@angular/material/select';
 import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from '@angular/material/form-field';
 import {MaterialModuleModule} from '../app/material-module/material-module.module'
-import { BarcodeScannerLivestreamModule } from "ngx-barcode-scanner";
+import {WindowService} from '../app/window.service'
 
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
-    BrowserModule,
+  BrowserModule,
     ZXingScannerModule,
     AppRoutingModule,
     NgBarcodeDetectorModule,
     BrowserAnimationsModule,
     MatSelectModule,
-    MaterialModuleModule,
-    BarcodeScannerLivestreamModule
+    MaterialModuleModule
   ],
-  providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },],
+  providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },WindowService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
