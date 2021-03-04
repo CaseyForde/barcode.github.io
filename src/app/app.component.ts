@@ -119,6 +119,7 @@ export class AppComponent implements OnInit,AfterViewInit{
   onValueChanges(result) {
     if(this.isValid(result)){
       this.qrResultString = result.codeResult.code;
+      alert(this.qrResultString)
     }
   }
 
