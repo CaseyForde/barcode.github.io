@@ -9,7 +9,7 @@
 <button (click)='onClick()'>Here Click Me</button> -->
 
 <!-- Zxingjs/ngx-scanner  -->
-<!-- <mat-menu #appMenu="matMenu">
+<mat-menu #appMenu="matMenu">
   <mat-selection-list>
     <mat-list-option checkboxPosition="start" (click)="toggleTorch()" [selected]="torchEnabled"
       *ngIf="torchAvailable$ | async">
@@ -34,7 +34,7 @@
     <strong>{{ qrResultString }}</strong>
   </div>
   update3
-</header> -->
+</header>
 
 <zxing-scanner [torch]="torchEnabled" [(device)]="currentDevice" (scanSuccess)="onCodeResult($event)"
 [formats]="formatsEnabled" tryHarder=true (permissionResponse)="onHasPermission($event)"
@@ -43,13 +43,13 @@ timeBetweenScans=10
 ></zxing-scanner>
 <div id="scan-area"></div>
 
-<!-- <section class="results" *ngIf="qrResultString">
+<section class="results" *ngIf="qrResultString">
   <div>
     <small>Result</small>
     <strong>{{ qrResultString }}</strong>
   </div>
   <button mat-icon-button (click)="clearResult()">&times;</button>
-</section> -->
+</section>
 
 <!-- [formats]="['QR_CODE', 'EAN_13', 'CODE_128', 'DATA_MATRIX']"
 [torch]="torch"
