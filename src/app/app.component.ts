@@ -174,27 +174,27 @@ export class AppComponent implements OnInit,AfterViewInit{
         err+=parseFloat(element.error);
       }
     });
-    if (err/countDecodedCodes < 0.1) {
+    if (err/countDecodedCodes < 0.5) {
       // console.log(result)
-      // this.qrResultString = result.codeResult.code
-      // alert(this.qrResultString)
-        const errors: number[] = result.codeResult.decodedCodes
-          .filter(_ => _.error !== undefined)
-          .map(_ => _.error);
-        var median
-        errors .sort((a, b) => a - b);
-        const half = Math.floor( errors .length / 2 );
-        if (errors .length % 2 === 1) {// Odd length
-          median =  errors[ half ];
-        }
-        median =  (errors[half - 1] + errors[half]) / 2.0;
-        if (median < 0.10){
-          console.log(result)
-          console.log(err/countDecodedCodes)
-          this.qrResultString = result.codeResult.code
-          alert(this.qrResultString)
-        }
-        else{}
+      this.qrResultString = result.codeResult.code
+      alert(this.qrResultString)
+        // const errors: number[] = result.codeResult.decodedCodes
+        //   .filter(_ => _.error !== undefined)
+        //   .map(_ => _.error);
+        // var median
+        // errors .sort((a, b) => a - b);
+        // const half = Math.floor( errors .length / 2 );
+        // if (errors .length % 2 === 1) {// Odd length
+        //   median =  errors[ half ];
+        // }
+        // median =  (errors[half - 1] + errors[half]) / 2.0;
+        // if (median < 0.10){
+        //   console.log(result)
+        //   console.log(err/countDecodedCodes)
+        //   this.qrResultString = result.codeResult.code
+        //   alert(this.qrResultString)
+        // }
+        // else{}
           // probably wrong
 
     } else {
