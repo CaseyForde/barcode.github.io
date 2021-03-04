@@ -72,16 +72,18 @@ export class AppComponent implements OnInit,AfterViewInit{
   }
 
   ngOnInit(){
-    console.log(this._window.nativeWindow)
-    if (!('BarcodeDetector' in this._window.nativeWindow)) {
-      console.log('Barcode Detector is not supported by this browser.');
-    } else {
-      console.log('Barcode Detector supported!');
-    }
+
   }
 
   ngAfterViewInit(){
-
+    console.log(this._window.nativeWindow)
+    if (!('BarcodeDetector' in this._window.nativeWindow)) {
+      console.log('Barcode Detector is not supported by this browser.');
+      alert('yes')
+    } else {
+      alert('no')
+      console.log('Barcode Detector supported!');
+    }
   }
   clearResult(): void {
     this.qrResultString = null;
