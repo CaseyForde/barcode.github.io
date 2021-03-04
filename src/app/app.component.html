@@ -70,3 +70,9 @@
 (camerasNotFound)="camerasNotFoundHandler($event)"
 (scanSuccess)="scanSuccessHandler($event)"
 (scanError)="scanErrorHandler($event)" -->
+{{qrResultString}}
+<input type="file" id="img" name="picture" accept="image/gif, image/jpeg, image/png" (change)="onFileSelected($event)">
+<button (click)='onClick()'>Decode</button>
+<div *ngIf='imageSrc'>
+  <img id="blah" [src]="imageSrc" alt="your image" />
+</div>

@@ -56,7 +56,8 @@ export class AppComponent implements OnInit,AfterViewInit{
     BarcodeFormat.UPC_E
   ];
 
-
+  decoder;
+  decoder_retail;
   hasDevices: boolean;
   hasPermission: boolean;
   detectionHash = {}
@@ -65,6 +66,7 @@ export class AppComponent implements OnInit,AfterViewInit{
   torchEnabled = false;
   torchAvailable$ = new BehaviorSubject<boolean>(false);
   tryHarder = false;
+  imageSrc: string | ArrayBuffer;
 
 
   constructor(private _window: WindowService){
@@ -78,8 +80,19 @@ export class AppComponent implements OnInit,AfterViewInit{
   ngAfterViewInit(){
     if (('BarcodeDetector' in window) && (this.windowFormats)) {
       alert('Barcode scanning is supported.');
+      this.decoder = window['BarcodeDetector']
+      this.decoder_retail =  this.decoder(['ean_13','upc_a'])
     }else {
       alert('Barcode Detector is not supported!');
+    }
+  }
+  onFileSelected(event){
+    const file = event.target.files[0];
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = e => this.imageSrc = reader.result;
+      reader.readAsDataURL(file);
     }
   }
   async windowFormats(){
@@ -88,6 +101,22 @@ export class AppComponent implements OnInit,AfterViewInit{
   }
   clearResult(): void {
     this.qrResultString = null;
+  }
+
+  onClick(){
+    if(this.decoder_retail){
+      this.decoder_retail.detect(document.getElementById('blah'))
+      .then(detectedCodes => {
+        for (const barcode of detectedCodes) {
+          this.qrResultString = barcode
+          console.log(' Barcode ${barcode.rawValue}' +
+              ' @ (${barcode.boundingBox.x}, ${barcode.boundingBox.y}) with size' +
+              ' ${barcode.boundingBox.width}x${barcode.boundingBox.height}');
+        }
+      }).catch(() => {
+        console.error("Barcode Detection failed, boo.");
+      })
+    }
   }
 
   onCamerasFound(devices: MediaDeviceInfo[]): void {
