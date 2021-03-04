@@ -33,13 +33,13 @@
   <div *ngIf="qrResultString">
     <strong>{{ qrResultString }}</strong>
   </div>
-  update2
+  update3
 </header>
 
 <zxing-scanner [torch]="torchEnabled" [(device)]="currentDevice" (scanSuccess)="onCodeResult($event)"
 [formats]="formatsEnabled" tryHarder=true (permissionResponse)="onHasPermission($event)"
 (camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)"
-timeBetweenScans=250
+timeBetweenScans=10
 ></zxing-scanner>
 
 <section class="results" *ngIf="qrResultString">
