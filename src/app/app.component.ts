@@ -115,25 +115,13 @@ export class AppComponent implements OnInit,AfterViewInit{
         inputStream: {
           type: 'LiveStream',
           constraints: {
-            width: { min: 100},
-            height: { min: 50},
-            aspectRatio: { min: 4 / 3, max: 16 / 9 },
-            //width: 800,
-            //height: 600,
-            //aspectRatio: 4 / 3,
+            width: '790',
+            height: '490',
             facingMode: 'environment' // or user
           },
-          area: {
-            // defines rectangle of the detection/localization area
-            top: '0%', // top offset
-            right: '0%', // right offset
-            left: '0%', // left offset
-            bottom: '0%' // bottom offset
-          }
         },
         frequency:'full',
         locator: {
-          patchSize: 'medium',
           halfSample: true
         },
         numOfWorkers: 8,
@@ -141,12 +129,12 @@ export class AppComponent implements OnInit,AfterViewInit{
           readers: [
             // 'code_39_reader',
             'ean_reader',
-            'ean_8_reader',
-            // 'code_128_reader',
+            // 'ean_8_reader',
+            'code_128_reader',
             //'code_39_vin_reader'
             //'codabar_reader',
-            // 'upc_reader'
-            //'upc_e_reader',
+            'upc_reader',
+            'upc_e_reader',
             //'i2of5_reader'
           ]
         },
@@ -172,9 +160,8 @@ export class AppComponent implements OnInit,AfterViewInit{
         err+=parseFloat(element.error);
       }
     });
-    if (err/countDecodedCodes < 0.1) {
+    if (err/countDecodedCodes < 0.05) {
       console.log(result)
-
       this.qrResultString = result.codeResult.code
       alert(this.qrResultString)
     } else {
