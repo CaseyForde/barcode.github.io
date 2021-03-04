@@ -9,7 +9,19 @@
 <button (click)='onClick()'>Here Click Me</button> -->
 
 <!-- Zxingjs/ngx-scanner  -->
-<mat-menu #appMenu="matMenu">
+
+<div>
+  {{qrResultString}}
+</div>
+<br/><br/>
+<div id="interactive" class="viewport">
+  <video autoplay="true" preload="auto" src="" muted="true" playsinline="true"></video>
+  <canvas class="drawingBuffer" width="100" height="50"></canvas>
+  <br clear="all">
+</div>
+
+
+<!-- <mat-menu #appMenu="matMenu">
   <mat-selection-list>
     <mat-list-option checkboxPosition="start" (click)="toggleTorch()" [selected]="torchEnabled"
       *ngIf="torchAvailable$ | async">
@@ -41,7 +53,9 @@
 (camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)"
 timeBetweenScans=10
 ></zxing-scanner>
-<div id="scan-area"></div>
+<div style="position: relative; width: 100%">
+  <div style="position: absolute; height: 5px; background-color: red; top: 50%; left: 25%; right: 25%">
+</div>
 
 <section class="results" *ngIf="qrResultString">
   <div>
@@ -49,7 +63,7 @@ timeBetweenScans=10
     <strong>{{ qrResultString }}</strong>
   </div>
   <button mat-icon-button (click)="clearResult()">&times;</button>
-</section>
+</section> -->
 
 <!-- [formats]="['QR_CODE', 'EAN_13', 'CODE_128', 'DATA_MATRIX']"
 [torch]="torch"
