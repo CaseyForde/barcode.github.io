@@ -10,8 +10,12 @@
 
 <!-- Zxingjs/ngx-scanner  -->
 
+<div id="interactive" class="viewport">
+  <!-- <video autoplay="true" preload="auto" src="" muted="true" playsinline="true"></video> -->
+  <canvas class="drawingBuffer" ></canvas>
+</div>
 
-<mat-menu #appMenu="matMenu">
+<!-- <mat-menu #appMenu="matMenu">
   <mat-selection-list>
     <mat-list-option checkboxPosition="start" (click)="toggleTorch()" [selected]="torchEnabled"
       *ngIf="torchAvailable$ | async">
@@ -38,14 +42,14 @@
   update3
 </header>
 <div>
-  <div id='inner' style="width:300px;height:300px;border:1px solid #000;">
+  <div id='inner' style="width:50%;height:50%;">
     <zxing-scanner [torch]="torchEnabled" [(device)]="currentDevice" (scanSuccess)="onCodeResult($event)"
     [formats]="formatsEnabled" tryHarder=true (permissionResponse)="onHasPermission($event)"
     (camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)"
     timeBetweenScans=10 autofocusEnable=true
     ></zxing-scanner>
   </div>
-</div>
+</div> -->
 
 
 
