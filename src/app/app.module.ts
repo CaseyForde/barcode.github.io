@@ -8,6 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSelectModule} from '@angular/material/select';
 import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from '@angular/material/form-field';
 import {MaterialModuleModule} from '../app/material-module/material-module.module'
+import { NgxBarcodeModule } from 'ngx-barcode';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import {MaterialModuleModule} from '../app/material-module/material-module.modul
     NgBarcodeDetectorModule,
     BrowserAnimationsModule,
     MatSelectModule,
-    MaterialModuleModule
+    MaterialModuleModule,
+    NgxBarcodeModule
   ],
   providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },],
   bootstrap: [AppComponent]
