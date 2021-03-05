@@ -1,78 +1,18 @@
-
-<!-- <div class="input-group">
-  <input type="file"  name="picture" accept="image/gif, image/jpeg, image/png" (change)="onFileSelected($event)" >
-  <div *ngIf='imageSrc'>
-    <img class="img" id="img" [src]="imageSrc" style="border: 1px solid gray" />
+<div #scanner [hidden]='hidden' lassName="scanner">
+  <div  id="scanner-video">
+    <video (play)='playEvent()' #video autoPlay playsInline></video>
   </div>
-</div>
-{{barcode}}
-<button (click)='onClick()'>Here Click Me</button> -->
-
-<!-- Zxingjs/ngx-scanner  -->
-
-<!-- <div id="interactive" class="viewport">
-  <video autoplay="true" preload="auto" src="" muted="true" playsinline="true"></video>
-  <canvas class="drawingBuffer" ></canvas>
-</div> -->
-
-
-<!-- <mat-menu #appMenu="matMenu">
-  <mat-selection-list>
-    <mat-list-option checkboxPosition="start" (click)="toggleTorch()" [selected]="torchEnabled"
-      *ngIf="torchAvailable$ | async">
-      Enable Torch
-    </mat-list-option>
-  </mat-selection-list>
-  <mat-divider></mat-divider>
-</mat-menu>
-
-<header>
-  <mat-form-field appearance="fill">
-    <select matNativeControl matInput (change)="onDeviceSelectChange($event.target.value)">
-      <option value="" [selected]="!currentDevice">No Device Selected</option>
-      <option *ngFor="let device of availableDevices" [value]="device.deviceId"
-        [selected]="currentDevice && device.deviceId === currentDevice.deviceId">{{device.label}}</option>
-    </select>
-  </mat-form-field>
-  <button mat-icon-button [matMenuTriggerFor]="appMenu">
-    <mat-icon>more_vert</mat-icon>
+  <div #frame id="scanner-frame"></div>
+  <canvas #canvas id="scanner-canvas"></canvas>
+  <img #img id="scanner-image" src="" alt="" />
+  <button id="scanner-close" (click)='closeScanner()'>
+    Close
   </button>
-  <div *ngIf="qrResultString">
-    <strong>{{ qrResultString }}</strong>
-  </div>
-  update3
-</header>
-<div>
-  <div id='inner' style="width:50%;height:50%;">
-    <zxing-scanner [torch]="torchEnabled" [(device)]="currentDevice" (scanSuccess)="onCodeResult($event)"
-    [formats]="formatsEnabled" tryHarder=true (permissionResponse)="onHasPermission($event)"
-    (camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)"
-    timeBetweenScans=10 autofocusEnable=true
-    ></zxing-scanner>
-  </div>
 </div>
-
-
-
-
- <section class="results" *ngIf="qrResultString">
-  <div>
-    <small>Result</small>
-    <strong>{{ qrResultString }}</strong>
-  </div>
-  <button mat-icon-button (click)="clearResult()">&times;</button>
-</section> -->
-
-<!-- [formats]="['QR_CODE', 'EAN_13', 'CODE_128', 'DATA_MATRIX']"
-[torch]="torch"
-(torchCompatible)="onTorchCompatible($event)"
-(camerasFound)="camerasFoundHandler($event)"
-(camerasNotFound)="camerasNotFoundHandler($event)"
-(scanSuccess)="scanSuccessHandler($event)"
-(scanError)="scanErrorHandler($event)" -->
+<!--
 {{qrResultString}}
 <input type="file" id="img" name="picture" accept="image/gif, image/jpeg, image/png" (change)="onFileSelected($event)">
 <button (click)='onClick()'>Decode</button>
 <div *ngIf='imageSrc'>
   <img id="blah" [src]="imageSrc" alt="your image" />
-</div>
+</div> -->

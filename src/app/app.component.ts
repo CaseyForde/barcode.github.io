@@ -1,41 +1,11 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { BarcodeFormat, Result } from '@zxing/library';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { BarcodeFormat, BrowserBarcodeReader, Result } from '@zxing/library';
 import { BrowserMultiFormatOneDReader, IScannerControls } from '@zxing/browser';
 import Quagga from 'Quagga'
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 import { BehaviorSubject } from 'rxjs';
-import { BrowserCodeReader, HTMLCanvasElementLuminanceSource, HybridBinarizer, BinaryBitmap } from '@zxing/library';
+import { MultiFormatReader,BrowserCodeReader, HTMLCanvasElementLuminanceSource, HybridBinarizer, BinaryBitmap } from '@zxing/library';
 import { WindowService } from "./window.service";
-
-BrowserCodeReader.prototype.createBinaryBitmap = function (mediaElement) {
-  const captureCanvasContext = this.getCaptureCanvasContext(mediaElement);
-  this.drawImageOnCanvas(captureCanvasContext, mediaElement);
-  const captureCanvas = this.getCaptureCanvas(mediaElement);
-
-  const allWidth = captureCanvas.width;
-  const allHeight = captureCanvas.height;
-  const squareSize = Math.min(allWidth, allHeight) / 2;
-  const top = (allHeight - squareSize) / 2;
-  const left = (allWidth - squareSize) / 2;
-
-  document.getElementById('scan-area').style.width = `${squareSize}px`;
-  document.getElementById('scan-area').style.height = `${squareSize}px`;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = squareSize;
-  canvas.height = squareSize;
-  const ctx = canvas.getContext('2d');
-  ctx.rect(0, 0, squareSize, squareSize);
-  ctx.fillStyle = 'white';
-  ctx.fill();
-
-  ctx.putImageData(captureCanvasContext.getImageData(left, top, squareSize, squareSize), 0, 0);
-
-  const luminanceSource = new HTMLCanvasElementLuminanceSource(canvas);
-  const hybridBinarizer = new HybridBinarizer(luminanceSource);
-
-  return new BinaryBitmap(hybridBinarizer);
-};
 
 
 @Component({
@@ -44,10 +14,19 @@ BrowserCodeReader.prototype.createBinaryBitmap = function (mediaElement) {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit,AfterViewInit{
-  @ViewChild('scanner') scanner: ZXingScannerComponent
+  @ViewChild('video') video
+  @ViewChild('canvas') canvas
+  @ViewChild('img') img
+  @ViewChild('frame') frame
+  @ViewChild('scanner') scanner;
 
   availableDevices: MediaDeviceInfo[];
   currentDevice: MediaDeviceInfo = null;
+  videoStream
+  barcodeReader = new BrowserBarcodeReader()
+  hidden:boolean = true
+  timeout = 1000 // time between frames
+  scale = 0.5 // size of crop frame
 
   formatsEnabled: BarcodeFormat[] = [
     BarcodeFormat.CODE_128,
@@ -69,7 +48,7 @@ export class AppComponent implements OnInit,AfterViewInit{
   imageSrc: string | ArrayBuffer;
 
 
-  constructor(private _window: WindowService){
+  constructor(private _window: WindowService,private el: ElementRef){
 
   }
 
@@ -78,13 +57,17 @@ export class AppComponent implements OnInit,AfterViewInit{
   }
 
   ngAfterViewInit(){
-    if (('BarcodeDetector' in window) && (this.windowFormats)) {
-      alert('Barcode scanning is supported.');
-      this.decoder = new window['BarcodeDetector']({formats: ['code_39', 'codabar', 'ean_13']})
-    }else {
-      alert('Barcode Detector is not supported!');
-    }
+    // if (('BarcodeDetector' in window) && (this.windowFormats)) {
+    //   alert('Barcode scanning is supported.');
+    //   this.decoder = new window['BarcodeDetector']({formats: ['code_39', 'codabar', 'ean_13']})
+    // }else {
+    //   alert('Barcode Detector is not supported!');
+    // }
+    setTimeout(()=>{                           //<<<---using ()=> syntax
+      this.openScanner()
+    }, 3000);
   }
+  //IMAGE SOLUTION FUNCTIONS
   onFileSelected(event){
     const file = event.target.files[0];
     if (event.target.files && event.target.files[0]) {
@@ -94,6 +77,7 @@ export class AppComponent implements OnInit,AfterViewInit{
       reader.readAsDataURL(file);
     }
   }
+
   async windowFormats(){
     let formats = await (window['BarcodeDetector'].getSupportedFormats()).includes('ean_13','upc_a')
     return  formats
@@ -116,6 +100,12 @@ export class AppComponent implements OnInit,AfterViewInit{
     }
   }
 
+  onClick2(){
+    this.openScanner()
+  }
+
+
+  //ZXING FUNCTIONS BELOW
   onCamerasFound(devices: MediaDeviceInfo[]): void {
     this.availableDevices = devices;
     this.hasDevices = Boolean(devices && devices.length);
@@ -146,5 +136,123 @@ export class AppComponent implements OnInit,AfterViewInit{
   toggleTryHarder(): void {
     this.tryHarder = !this.tryHarder;
   }
+  //Zxing Library
+  onFoundBarcode(result){
+    console.log(result)
+  }
+
+  playEvent(){
+    console.log('this.this.not wuking')
+      // get video's intrinsic width and height, eg 640x480,
+      // and set canvas to it to match.
+      this.canvas.width = this.video.videoWidth
+      this.canvas.height = this.video.videoHeight
+
+      // set position of orange frame in video
+      this.frame.style.width = this.video.clientWidth * this.scale + 'px'
+      this.frame.style.height = this.video.clientHeight * this.scale + 'px'
+      this.frame.style.left =
+        (window.innerWidth - this.video.clientWidth * this.scale) / 2 + 'px'
+      this.frame.style.top =
+        (window.innerHeight - this.video.clientHeight * this.scale) / 2 + 'px'
+
+      // start the barcode reader process
+
+      this.scanFrame()
+  }
+
+  openScanner() {
+    this.showScanner()
+
+    // get html element
+    // turn on the video stream
+    const constraints = { video: true }
+    navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+      this.videoStream = stream
+      this.video.srcObject = stream
+    })
+  }
+
+  scanFrame = () => {
+    console.log('this..is it working?')
+    if (this.videoStream) {
+      // copy the video stream image onto the canvas
+      this.canvas.getContext('2d').drawImage(
+        this.video,
+        // source x, y, w, h:
+        (this.video.videoWidth - this.video.videoWidth * this.scale) / 2,
+        (this.video.videoHeight - this.video.videoHeight * this.scale) / 2,
+        this.video.videoWidth * this.scale,
+        this.video.videoHeight * this.scale,
+        // dest x, y, w, h:
+        0,
+        0,
+        this.canvas.width,
+        this.canvas.height
+      )
+
+      // convert the canvas image to an image blob and stick it in an image element
+      this.canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob)
+        // when the image is loaded, feed it to the barcode reader
+        this.img.onload = async () => {
+          this.barcodeReader
+            // .decodeFromImage(img) // decodes but doesn't show img
+            .decodeFromImage(null, url)
+            .then(this.found) // calls onFoundBarcode with the barcode string
+            .catch(this.notfound)
+            .finally(this.releaseMemory)
+          this.img.onload = null
+          setTimeout(this.scanFrame, this.timeout) // repeat
+        }
+        this.img.src = url // load the image blob
+        console.log(this.img.src)
+      })
+    }
+  }
+
+  found = (result) => {
+    this.onFoundBarcode(result.text)
+    this.closeScanner()
+  }
+
+  notfound =(err) => {
+    if (err.name !== 'NotFoundException') {
+      console.error(err)
+    }
+  }
+
+  releaseMemory = ()=>{
+    URL.revokeObjectURL(this.img.url) // release image blob memory
+    this.img.url = null
+  }
+
+  closeScanner() {
+    if (this.videoStream) {
+      this.videoStream.getTracks().forEach(track => track.stop()) // stop webcam feed
+      this.videoStream = null
+    }
+    this.hideScanner()
+    this.barcodeReader.reset()
+  }
+
+  showScanner() {
+    this.hidden = false
+  }
+
+  hideScanner() {
+    this.hidden = true
+  }
+
+
+  crop = (videoWidth: number, videoHeight: number) => {
+    const scanHeight = videoHeight / 2;
+    const scanWidth = videoWidth / 2;
+    const xOffset = (videoHeight - scanHeight) / 2;
+    const yOffset = (videoWidth - scanWidth) / 2;
+
+    return { scanHeight, scanWidth, xOffset, yOffset };
+  }
+
 
 }
