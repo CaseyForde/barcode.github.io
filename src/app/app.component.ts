@@ -97,7 +97,7 @@ export class AppComponent implements OnInit,AfterViewInit{
     console.log('ZXing code reader initialized')
     this.barcodeReader.getVideoInputDevices()
         .then((videoInputDevices) => {
-            this.selectedDeviceId = videoInputDevices[0].deviceId })
+            this.selectedDeviceId = videoInputDevices[1].deviceId })
   }
 
   start(){
