@@ -1,14 +1,6 @@
-<div #scanner [hidden]='hidden' lassName="scanner">
-  <div  id="scanner-video">
-    <video (play)='playEvent()' #video autoPlay playsInline></video>
-  </div>
-  <div #frame id="scanner-frame"></div>
-  <canvas #canvas id="scanner-canvas"></canvas>
-  <img #img id="scanner-image" src="" alt="" />
-  <button id="scanner-close" (click)='closeScanner()'>
-    Close
-  </button>
-</div>
+<button (click)='start()'>Start</button>
+<video id="video" style="border: 1px solid gray"></video>
+<div id="scan-area"></div>
 <!--
 {{qrResultString}}
 <input type="file" id="img" name="picture" accept="image/gif, image/jpeg, image/png" (change)="onFileSelected($event)">

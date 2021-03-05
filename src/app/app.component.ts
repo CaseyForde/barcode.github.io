@@ -7,6 +7,35 @@ import { BehaviorSubject } from 'rxjs';
 import { MultiFormatReader,BrowserCodeReader, HTMLCanvasElementLuminanceSource, HybridBinarizer, BinaryBitmap } from '@zxing/library';
 import { WindowService } from "./window.service";
 
+BrowserCodeReader.prototype.createBinaryBitmap = function (mediaElement) {
+  const captureCanvasContext = this.getCaptureCanvasContext(mediaElement);
+  this.drawImageOnCanvas(captureCanvasContext, mediaElement);
+  const captureCanvas = this.getCaptureCanvas(mediaElement);
+
+  const allWidth = captureCanvas.width;
+  const allHeight = captureCanvas.height;
+  const squareSize = Math.min(allWidth, allHeight) / 2;
+  const top = (allHeight - squareSize) / 2;
+  const left = (allWidth - squareSize) / 2;
+
+  document.getElementById('scan-area').style.width = `${squareSize}px`;
+  document.getElementById('scan-area').style.height = `${squareSize}px`;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = squareSize;
+  canvas.height = squareSize;
+  const ctx = canvas.getContext('2d');
+  ctx.rect(0, 0, squareSize, squareSize);
+  ctx.fillStyle = 'white';
+  ctx.fill();
+
+  ctx.putImageData(captureCanvasContext.getImageData(left, top, squareSize, squareSize), 0, 0);
+
+  const luminanceSource = new HTMLCanvasElementLuminanceSource(canvas);
+  const hybridBinarizer = new HybridBinarizer(luminanceSource);
+
+  return new BinaryBitmap(hybridBinarizer);
+};
 
 @Component({
   selector: 'app-root',
@@ -46,6 +75,7 @@ export class AppComponent implements OnInit,AfterViewInit{
   torchAvailable$ = new BehaviorSubject<boolean>(false);
   tryHarder = false;
   imageSrc: string | ArrayBuffer;
+  selectedDeviceId: string;
 
 
   constructor(private _window: WindowService,private el: ElementRef){
@@ -63,10 +93,24 @@ export class AppComponent implements OnInit,AfterViewInit{
     // }else {
     //   alert('Barcode Detector is not supported!');
     // }
-    setTimeout(()=>{                           //<<<---using ()=> syntax
-      this.openScanner()
-    }, 3000);
+    let selectedDeviceId;
+    console.log('ZXing code reader initialized')
+    this.barcodeReader.getVideoInputDevices()
+        .then((videoInputDevices) => {
+            this.selectedDeviceId = videoInputDevices[0].deviceId })
   }
+
+  start(){
+    this.barcodeReader.decodeOnceFromVideoDevice(this.selectedDeviceId, 'video').then((result) => {
+      console.log(result)
+      // this.qrResultString = result
+  }).catch((err) => {
+      console.error(err)
+      // document.getElementById('result').textContent = err
+  })
+  console.log(`Started continous decode from camera with id ${this.selectedDeviceId}`)
+
+}
   //IMAGE SOLUTION FUNCTIONS
   onFileSelected(event){
     const file = event.target.files[0];
@@ -98,10 +142,6 @@ export class AppComponent implements OnInit,AfterViewInit{
         console.error("Barcode Detection failed, boo.");
       })
     }
-  }
-
-  onClick2(){
-    this.openScanner()
   }
 
 
@@ -141,108 +181,6 @@ export class AppComponent implements OnInit,AfterViewInit{
     console.log(result)
   }
 
-  playEvent(){
-    console.log('this.this.not wuking')
-      // get video's intrinsic width and height, eg 640x480,
-      // and set canvas to it to match.
-      this.canvas.width = this.video.videoWidth
-      this.canvas.height = this.video.videoHeight
-
-      // set position of orange frame in video
-      this.frame.style.width = this.video.clientWidth * this.scale + 'px'
-      this.frame.style.height = this.video.clientHeight * this.scale + 'px'
-      this.frame.style.left =
-        (window.innerWidth - this.video.clientWidth * this.scale) / 2 + 'px'
-      this.frame.style.top =
-        (window.innerHeight - this.video.clientHeight * this.scale) / 2 + 'px'
-
-      // start the barcode reader process
-
-      this.scanFrame()
-  }
-
-  openScanner() {
-    this.showScanner()
-
-    // get html element
-    // turn on the video stream
-    const constraints = { video: true }
-    navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-      this.videoStream = stream
-      this.video.srcObject = stream
-    })
-  }
-
-  scanFrame = () => {
-    console.log('this..is it working?')
-    if (this.videoStream) {
-      // copy the video stream image onto the canvas
-      this.canvas.getContext('2d').drawImage(
-        this.video,
-        // source x, y, w, h:
-        (this.video.videoWidth - this.video.videoWidth * this.scale) / 2,
-        (this.video.videoHeight - this.video.videoHeight * this.scale) / 2,
-        this.video.videoWidth * this.scale,
-        this.video.videoHeight * this.scale,
-        // dest x, y, w, h:
-        0,
-        0,
-        this.canvas.width,
-        this.canvas.height
-      )
-
-      // convert the canvas image to an image blob and stick it in an image element
-      this.canvas.toBlob(blob => {
-        const url = URL.createObjectURL(blob)
-        // when the image is loaded, feed it to the barcode reader
-        this.img.onload = async () => {
-          this.barcodeReader
-            // .decodeFromImage(img) // decodes but doesn't show img
-            .decodeFromImage(null, url)
-            .then(this.found) // calls onFoundBarcode with the barcode string
-            .catch(this.notfound)
-            .finally(this.releaseMemory)
-          this.img.onload = null
-          setTimeout(this.scanFrame, this.timeout) // repeat
-        }
-        this.img.src = url // load the image blob
-        console.log(this.img.src)
-      })
-    }
-  }
-
-  found = (result) => {
-    this.onFoundBarcode(result.text)
-    this.closeScanner()
-  }
-
-  notfound =(err) => {
-    if (err.name !== 'NotFoundException') {
-      console.error(err)
-    }
-  }
-
-  releaseMemory = ()=>{
-    URL.revokeObjectURL(this.img.url) // release image blob memory
-    this.img.url = null
-  }
-
-  closeScanner() {
-    if (this.videoStream) {
-      this.videoStream.getTracks().forEach(track => track.stop()) // stop webcam feed
-      this.videoStream = null
-    }
-    this.hideScanner()
-    this.barcodeReader.reset()
-  }
-
-  showScanner() {
-    this.hidden = false
-  }
-
-  hideScanner() {
-    this.hidden = true
-  }
 
 
   crop = (videoWidth: number, videoHeight: number) => {
