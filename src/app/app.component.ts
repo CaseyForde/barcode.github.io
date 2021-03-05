@@ -80,7 +80,7 @@ export class AppComponent implements OnInit,AfterViewInit{
   ngAfterViewInit(){
     if (('BarcodeDetector' in window) && (this.windowFormats)) {
       alert('Barcode scanning is supported.');
-      this.decoder = window['BarcodeDetector']
+      this.decoder = new window['BarcodeDetector']
       this.decoder_retail =  this.decoder(['ean_13','upc_a'])
     }else {
       alert('Barcode Detector is not supported!');
