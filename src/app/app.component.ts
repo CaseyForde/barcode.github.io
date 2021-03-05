@@ -108,9 +108,7 @@ export class AppComponent implements OnInit,AfterViewInit{
       .then(detectedCodes => {
         for (const barcode of detectedCodes) {
           this.qrResultString = barcode
-          console.log(' Barcode ${barcode.rawValue}' +
-              ' @ (${barcode.boundingBox.x}, ${barcode.boundingBox.y}) with size' +
-              ' ${barcode.boundingBox.width}x${barcode.boundingBox.height}');
+          console.log(barcode);
         }
       }).catch(() => {
         console.error("Barcode Detection failed, boo.");
