@@ -103,7 +103,7 @@ export class AppComponent implements OnInit,AfterViewInit{
   }
 
   onClick(){
-    if(this.decoder_retail){
+    if(this.decoder){
       this.decoder.detect(document.getElementById('blah'))
       .then(detectedCodes => {
         for (const barcode of detectedCodes) {
