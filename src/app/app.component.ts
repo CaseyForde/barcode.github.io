@@ -87,12 +87,12 @@ export class AppComponent implements OnInit,AfterViewInit{
   }
 
   ngAfterViewInit(){
-    // if (('BarcodeDetector' in window) && (this.windowFormats)) {
-    //   alert('Barcode scanning is supported.');
-    //   this.decoder = new window['BarcodeDetector']({formats: ['code_39', 'codabar', 'ean_13']})
-    // }else {
-    //   alert('Barcode Detector is not supported!');
-    // }
+    if (('BarcodeDetector' in window) && (this.windowFormats)) {
+      alert('Barcode scanning is supported.');
+      this.decoder = new window['BarcodeDetector']({formats: ['code_39', 'codabar', 'ean_13']})
+    }else {
+      alert('Barcode Detector is not supported!');
+    }
     let selectedDeviceId;
     console.log('ZXing code reader initialized')
     this.barcodeReader.getVideoInputDevices()
