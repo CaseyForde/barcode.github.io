@@ -69,21 +69,56 @@ export class AppComponent implements OnInit,AfterViewInit{
   }
 
   onClick(){
+    this.decodeContinuously();
     console.log(`Started decode from camera with id ${this.selectedDeviceId}`)
   }
 
-  onError(error) {
-    console.error(error);
-    this.isError = true;
-  }
+  // onError(error) {
+  //   console.error(error);
+  //   this.isError = true;
+  // }
 
-  onValueChanges(result) {
-    this.barcodeValue = result.codeResult.code;
-  }
+  // onValueChanges(result) {
+  //   this.barcodeValue = result.codeResult.code;
+  // }
 
-  onStarted(started) {
-    console.log(started);
-  }
+  // onStarted(started) {
+  //   console.log(started);
+  // }
 
+  decodeContinuously() {
+    console.log(this.codeReader)
+    this.codeReader.decodeFromVideoDevice(this.selectedDeviceId,'video', (result, err) => {
+      console.log()
+      if (result) {
+        // properly decoded qr code
+        alert(result)
+      }
+
+      if (err) {
+        // As long as this error belongs into one of the following categories
+        // the code reader is going to continue as excepted. Any other error
+        // will stop the decoding loop.
+        //
+        // Excepted Exceptions:
+        //
+        //  - NotFoundException
+        //  - ChecksumException
+        //  - FormatException
+
+        if (err instanceof NotFoundException) {
+          console.log('No QR code found.')
+        }
+
+        if (err instanceof ChecksumException) {
+          console.log('A code was found, but it\'s read value was not valid.')
+        }
+
+        if (err instanceof FormatException) {
+          console.log('A code was found, but it was in a invalid format.')
+        }
+      }
+    })
+  }
 
 }
