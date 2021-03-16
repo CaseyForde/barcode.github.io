@@ -10,6 +10,7 @@ import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from '@angular/material/form-field';
 import {MaterialModuleModule} from '../app/material-module/material-module.module'
 import { BarcodeScannerLivestreamModule } from "ngx-barcode-scanner";
 import {WindowService} from '../app/window.service'
+import {NgxBarcodeScannerModule} from '@eisberg-labs/ngx-barcode-scanner';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import {WindowService} from '../app/window.service'
     BrowserAnimationsModule,
     MatSelectModule,
     MaterialModuleModule,
-    BarcodeScannerLivestreamModule
+    BarcodeScannerLivestreamModule,
+    NgxBarcodeScannerModule
   ],
   providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },WindowService],
   bootstrap: [AppComponent]

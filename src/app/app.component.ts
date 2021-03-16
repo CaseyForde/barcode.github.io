@@ -16,6 +16,8 @@ import { BarcodeScannerLivestreamComponent } from "ngx-barcode-scanner";
 export class AppComponent implements OnInit,AfterViewInit{
   @ViewChild(BarcodeScannerLivestreamComponent)
   barcodeScanner: BarcodeScannerLivestreamComponent;
+  value: string;
+  isError = false;
 
   types:string[] = [
     "ean",
@@ -38,6 +40,11 @@ export class AppComponent implements OnInit,AfterViewInit{
 
   onClick(){
     Quagga.start()
+  }
+
+  onError(error) {
+    console.error(error);
+    this.isError = true;
   }
 
   onValueChanges(result) {
