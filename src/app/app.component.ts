@@ -1,12 +1,12 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { BarcodeFormat, BrowserBarcodeReader, Result , BrowserMultiFormatReader, NotFoundException, ChecksumException, FormatException} from '@zxing/library';
 import Quagga from '@ericblade/quagga2';
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 import { BehaviorSubject } from 'rxjs';
-import { MultiFormatReader,BrowserCodeReader, HTMLCanvasElementLuminanceSource, HybridBinarizer, BinaryBitmap } from '@zxing/library';
 import { WindowService } from "./window.service";
 import { BarcodeScannerLivestreamComponent } from "ngx-barcode-scanner";
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { BrowserMultiFormatOneDReader,BarcodeFormat,BrowserCodeReader,BrowserMultiFormatReader} from '@zxing/browser';
+import { ChecksumException, DecodeHintType, FormatException, NotFoundException } from "@zxing/library";
 
 @Component({
   selector: 'app-root',
@@ -19,13 +19,15 @@ export class AppComponent implements OnInit,AfterViewInit{
   @ViewChild('video') video:HTMLVideoElement;
   value: string;
   isError = false;
-
   types:string[] = [
     "ean",
     "upc"
   ]
+  hints = new Map();
+  formats = [BarcodeFormat.UPC_A, BarcodeFormat.EAN_13, BarcodeFormat.UPC_EAN_EXTENSION/*, ...*/];
 
-  codeReader = new BrowserBarcodeReader()
+  codeReader:BrowserMultiFormatOneDReader;
+
   selectedDeviceId
   qrResultString: string;
   hasDevices: boolean;
@@ -46,7 +48,7 @@ export class AppComponent implements OnInit,AfterViewInit{
   }
   barcodeValue;
   ngOnInit(){
-    this.codeReader.getVideoInputDevices()
+    BrowserCodeReader.listVideoInputDevices()
     .then((videoInputDevices) => {
       const sourceSelect = document.getElementById('sourceSelect')
       this.selectedDeviceId = videoInputDevices[0].deviceId
@@ -54,6 +56,8 @@ export class AppComponent implements OnInit,AfterViewInit{
         this.availableDevices = videoInputDevices
       }
     })
+    this.hints.set(DecodeHintType.POSSIBLE_FORMATS, this.formats);
+    this.codeReader = new BrowserMultiFormatOneDReader(this.hints)
   }
   onBarcodeScanned(code: any) {
     console.log(code)
@@ -64,7 +68,7 @@ export class AppComponent implements OnInit,AfterViewInit{
   }
 
   onClick(){
-    this.decodeContinuously(this.codeReader, this.selectedDeviceId);
+    this.decodeContinuously();
     console.log(`Started decode from camera with id ${this.selectedDeviceId}`)
   }
 
@@ -81,13 +85,12 @@ export class AppComponent implements OnInit,AfterViewInit{
   //   console.log(started);
   // }
 
-  decodeContinuously(codeReader, selectedDeviceId) {
-    codeReader.decodeFromInputVideoDeviceContinuously(selectedDeviceId,document.getElementById('video'), (result, err) => {
+  decodeContinuously() {
+    this.codeReader.decodeFromVideoDevice(this.selectedDeviceId,'video', (result, err) => {
       console.log()
       if (result) {
         // properly decoded qr code
         alert(result)
-        document.getElementById('result').textContent = result.text
       }
 
       if (err) {
