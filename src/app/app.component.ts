@@ -1,12 +1,12 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { BarcodeFormat, BrowserBarcodeReader, Result } from '@zxing/library';
-import { BrowserMultiFormatOneDReader, IScannerControls } from '@zxing/browser';
+import { BarcodeFormat, BrowserBarcodeReader, Result , BrowserMultiFormatReader, NotFoundException, ChecksumException, FormatException} from '@zxing/library';
 import Quagga from '@ericblade/quagga2';
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 import { BehaviorSubject } from 'rxjs';
 import { MultiFormatReader,BrowserCodeReader, HTMLCanvasElementLuminanceSource, HybridBinarizer, BinaryBitmap } from '@zxing/library';
 import { WindowService } from "./window.service";
 import { BarcodeScannerLivestreamComponent } from "ngx-barcode-scanner";
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +16,7 @@ import { BarcodeScannerLivestreamComponent } from "ngx-barcode-scanner";
 export class AppComponent implements OnInit,AfterViewInit{
   // @ViewChild(BarcodeScannerLivestreamComponent)
   // barcodeScanner: BarcodeScannerLivestreamComponent;
+  @ViewChild('video') video:HTMLVideoElement;
   value: string;
   isError = false;
 
@@ -23,7 +24,8 @@ export class AppComponent implements OnInit,AfterViewInit{
     "ean",
     "upc"
   ]
-
+  codeReader = new BrowserMultiFormatReader()
+  selectedDeviceId
   qrResultString: string;
   hasDevices: boolean;
   torchEnabled = false;
@@ -43,7 +45,14 @@ export class AppComponent implements OnInit,AfterViewInit{
   }
   barcodeValue;
   ngOnInit(){
-
+    this.codeReader.getVideoInputDevices()
+    .then((videoInputDevices) => {
+      const sourceSelect = document.getElementById('sourceSelect')
+      this.selectedDeviceId = videoInputDevices[0].deviceId
+      if (videoInputDevices.length >= 1) {
+        this.availableDevices = videoInputDevices
+      }
+    })
   }
   onBarcodeScanned(code: any) {
     console.log(code)
@@ -53,8 +62,10 @@ export class AppComponent implements OnInit,AfterViewInit{
     // this.barcodeScanner.start();
   }
 
-  // onClick(){
-  // }
+  onClick(){
+    this.decodeContinuously(this.codeReader, this.selectedDeviceId);
+    console.log(`Started decode from camera with id ${this.selectedDeviceId}`)
+  }
 
   // onError(error) {
   //   console.error(error);
@@ -69,23 +80,39 @@ export class AppComponent implements OnInit,AfterViewInit{
   //   console.log(started);
   // }
 
-  onTorchCompatible(isCompatible: boolean): void {
-    this.torchAvailable$.next(isCompatible || false);
-  }
+  decodeContinuously(codeReader, selectedDeviceId) {
+    codeReader.decodeFromInputVideoDeviceContinuously(selectedDeviceId, 'video', (result, err) => {
+      console.log()
+      if (result) {
+        // properly decoded qr code
+        console.log('Found QR code!', result)
+        document.getElementById('result').textContent = result.text
+      }
 
-  toggleTorch(): void {
-    this.torchEnabled = !this.torchEnabled;
-  }
+      if (err) {
+        // As long as this error belongs into one of the following categories
+        // the code reader is going to continue as excepted. Any other error
+        // will stop the decoding loop.
+        //
+        // Excepted Exceptions:
+        //
+        //  - NotFoundException
+        //  - ChecksumException
+        //  - FormatException
 
-  onCamerasFound(devices: MediaDeviceInfo[]): void {
-    this.availableDevices = devices;
-    this.hasDevices = Boolean(devices && devices.length);
-  }
+        if (err instanceof NotFoundException) {
+          console.log('No QR code found.')
+        }
 
-  onCodeResult(resultString: string) {
-    alert(resultString)
-    console.log(resultString)
-    this.qrResultString = resultString;
+        if (err instanceof ChecksumException) {
+          console.log('A code was found, but it\'s read value was not valid.')
+        }
+
+        if (err instanceof FormatException) {
+          console.log('A code was found, but it was in a invalid format.')
+        }
+      }
+    })
   }
 
 }

@@ -6,15 +6,14 @@
 <p style="color:red" *ngIf="isError">Barcode scan is not available.</p>
 <ngx-barcode-scanner [(value)]="value" [codes]="['code_128', 'ean', 'upc', 'upc_e', 'ean_8']" [errorThreshold]="0.1"
   (exception)="onError($event)"></ngx-barcode-scanner> -->
-
-  <zxing-scanner [torch]="torchEnabled" [(device)]="currentDevice" (scanSuccess)="onCodeResult($event)"
-  [formats]="formatsEnabled" (camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)"></zxing-scanner>
-
-
-  <section class="results" *ngIf="qrResultString">
-    <div>
-      <small>Result</small>
-      <strong>{{ qrResultString }}</strong>
-    </div>
-    <button mat-icon-button (click)="clearResult()">&times;</button>
-  </section>
+  <button (click)='onClick()'>Start</button>
+  <br/>
+  <br/>
+  <mat-form-field>
+    <mat-select [(value)]='selectedDeviceId'>
+      <mat-option *ngFor="let device of availableDevices" [value]="device.deviceId">{{device.label}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div>
+    <video #video id="video" width="300" height="200" style="border: 1px solid gray"></video>
+  </div>
