@@ -86,7 +86,7 @@ export class AppComponent implements OnInit,AfterViewInit{
       console.log()
       if (result) {
         // properly decoded qr code
-        console.log('Found QR code!', result)
+        alert(result)
         document.getElementById('result').textContent = result.text
       }
 
