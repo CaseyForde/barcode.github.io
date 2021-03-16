@@ -24,7 +24,8 @@ export class AppComponent implements OnInit,AfterViewInit{
     "ean",
     "upc"
   ]
-  codeReader = new BrowserMultiFormatReader()
+
+  codeReader = new BrowserBarcodeReader()
   selectedDeviceId
   qrResultString: string;
   hasDevices: boolean;
@@ -81,7 +82,7 @@ export class AppComponent implements OnInit,AfterViewInit{
   // }
 
   decodeContinuously(codeReader, selectedDeviceId) {
-    codeReader.decodeFromInputVideoDeviceContinuously(selectedDeviceId, 'video', (result, err) => {
+    codeReader.decodeFromInputVideoDeviceContinuously(selectedDeviceId,document.getElementById('video'), (result, err) => {
       console.log()
       if (result) {
         // properly decoded qr code
