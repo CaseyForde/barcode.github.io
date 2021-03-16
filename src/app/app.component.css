@@ -14,7 +14,9 @@ zxing-scanner::ng-deep video {
   left: 50%;
   transform: translate(-50%, -50%);
 }
-/* .results {
+
+.results {
+
   position: sticky;
   bottom: 0;
   padding: 15px;
@@ -25,4 +27,25 @@ zxing-scanner::ng-deep video {
   align-items: center;
   justify-content: space-between;
 
-} */
+
+
+
+}
+
+.result-small {
+  font-weight: bolder;
+  display: block;
+  font-size: 60%;
+  margin: -.6em 0 0 0;
+}
+
+
+.result-button {
+  background: none;
+  border: none;
+  line-height: 1;
+  font-weight: bolder;
+  font-size: 120%;
+  float: right;
+  color: #fff;
+}

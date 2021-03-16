@@ -11,6 +11,8 @@ import {MaterialModuleModule} from '../app/material-module/material-module.modul
 import { BarcodeScannerLivestreamModule } from "ngx-barcode-scanner";
 import {WindowService} from '../app/window.service'
 import {NgxBarcodeScannerModule} from '@eisberg-labs/ngx-barcode-scanner';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,8 @@ import {NgxBarcodeScannerModule} from '@eisberg-labs/ngx-barcode-scanner';
     MatSelectModule,
     MaterialModuleModule,
     BarcodeScannerLivestreamModule,
-    NgxBarcodeScannerModule
+    NgxBarcodeScannerModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],
   providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },WindowService],
   bootstrap: [AppComponent]

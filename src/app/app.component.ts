@@ -14,8 +14,8 @@ import { BarcodeScannerLivestreamComponent } from "ngx-barcode-scanner";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit,AfterViewInit{
-  @ViewChild(BarcodeScannerLivestreamComponent)
-  barcodeScanner: BarcodeScannerLivestreamComponent;
+  // @ViewChild(BarcodeScannerLivestreamComponent)
+  // barcodeScanner: BarcodeScannerLivestreamComponent;
   value: string;
   isError = false;
 
@@ -23,6 +23,21 @@ export class AppComponent implements OnInit,AfterViewInit{
     "ean",
     "upc"
   ]
+
+  qrResultString: string;
+  hasDevices: boolean;
+  torchEnabled = false;
+  torchAvailable$ = new BehaviorSubject<boolean>(false);
+
+  formatsEnabled: BarcodeFormat[] = [
+    BarcodeFormat.EAN_13,
+    BarcodeFormat.UPC_E,
+    BarcodeFormat.UPC_A
+  ];
+
+  availableDevices: MediaDeviceInfo[];
+  currentDevice: MediaDeviceInfo = null;
+
   constructor(private _window: WindowService,private el: ElementRef){
 
   }
@@ -35,23 +50,41 @@ export class AppComponent implements OnInit,AfterViewInit{
   }
 
   ngAfterViewInit(){
-    this.barcodeScanner.start();
+    // this.barcodeScanner.start();
   }
 
-  onClick(){
-    Quagga.start()
+  // onClick(){
+  // }
+
+  // onError(error) {
+  //   console.error(error);
+  //   this.isError = true;
+  // }
+
+  // onValueChanges(result) {
+  //   this.barcodeValue = result.codeResult.code;
+  // }
+
+  // onStarted(started) {
+  //   console.log(started);
+  // }
+
+  onTorchCompatible(isCompatible: boolean): void {
+    this.torchAvailable$.next(isCompatible || false);
   }
 
-  onError(error) {
-    console.error(error);
-    this.isError = true;
+  toggleTorch(): void {
+    this.torchEnabled = !this.torchEnabled;
   }
 
-  onValueChanges(result) {
-    this.barcodeValue = result.codeResult.code;
+  onCamerasFound(devices: MediaDeviceInfo[]): void {
+    this.availableDevices = devices;
+    this.hasDevices = Boolean(devices && devices.length);
   }
 
-  onStarted(started) {
-    console.log(started);
+  onCodeResult(resultString: string) {
+    alert(resultString)
+    this.qrResultString = resultString;
   }
+
 }
