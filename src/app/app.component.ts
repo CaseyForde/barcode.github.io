@@ -84,6 +84,7 @@ export class AppComponent implements OnInit,AfterViewInit{
 
   onCodeResult(resultString: string) {
     alert(resultString)
+    console.log(resultString)
     this.qrResultString = resultString;
   }
 
